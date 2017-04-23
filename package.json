@@ -1,0 +1,33 @@
+{
+  "name": "nlm-umls",
+  "scripts": {
+    "test": "mocha"
+  },
+  "data": {
+    "info": {
+      "softwareVersion": "0.0.1"
+    }
+  },
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "async": "^2.1.5",
+    "bluebird": "^3.5.0",
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
+    "config": "^1.25.1",
+    "fs": "0.0.1-security",
+    "marklogic": "^1.0.6",
+    "mocha": "^3.2.0",
+    "mysql": "^2.13.0",
+    "n3": "^0.10.0",
+    "proxyquire": "^1.7.11",
+    "winston": "2.x"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  },
+  "devhosturl": "http://hw-en-dcrs-ap01:",
+  "prodhosturl": "http://hw-en-pcrs-ap01:",
+  "port": 8088
+}

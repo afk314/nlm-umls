@@ -1,0 +1,9 @@
+{
+  "mysql": {
+    "host": "192.168.0.61",
+    "user": "umls_user",
+    "password": "dillweed",
+    "database": "2016ab",
+    "pool": "5"
+  }
+}
