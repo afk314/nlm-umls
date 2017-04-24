@@ -19,6 +19,10 @@ mlutils.get_write_stream = function(graph, mimetype) {
 	return db.graphs.createWriteStream(graph, mimetype);
 };
 
+mlutils.merge_data = function(graph, mimetype, writer) {
+	db.graphs.merge(graph,mimetype,writer);
+}
+
 mlutils.list_graphs = function() {
 	db.graphs.list('text/uri-list')
 		.result(

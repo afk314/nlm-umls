@@ -2,7 +2,7 @@ var mysql = require('mysql');
 var config = require('config');
 var Promise = require('bluebird');
 var logger = require('winston');
-var icd10cm = require('./builders/master_builder');
+var master_builder = require('./builders/master_builder');
 
 var mlutils = require('./marklogic/marklogic-utils');
 
@@ -17,14 +17,15 @@ mlutils.init(config);
 
 mlutils.list_graphs();
 
-try {
-	icd10cm.build().then(() => {
-		logger.debug('Done!')
-		database.end();
-	}).catch(err => logger.error(err));
-} catch(err) {
-	logger.error('Dang..',err);
-}
+
+master_builder.outer_run(function(err,results) {
+	database.end();
+	if (err) {
+		logger.error('Oh no..',err);
+	} else {
+		logger.debug(results);
+	}
+});
 
 
 

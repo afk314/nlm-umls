@@ -1,6 +1,6 @@
 module.exports = {
 	connInfo: {
-		host: '192.168.0.61',
+		host: 'localhost',
 		port: 8000,
 		user: 'umls_user',
 		password: 'dillweed',

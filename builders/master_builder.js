@@ -9,6 +9,7 @@ var constants = require('../rdf/constants');
 var streams = require('./../marklogic/graph_writers');
 var n3 = require('n3');
 var util = require('util');
+var async = require('async');
 
 
 var aui = require('./aui');
@@ -35,13 +36,42 @@ function get_query(offset, limit) {
 }
 
 
-builder.build = function() {
+builder.outer_run = function(cb) {
+	var offset = 0;
+	var limit = 25000;
+	async.doUntil(function(callback) {
+		builder.build(offset,limit).then(function(returned) {
+			offset = offset + returned;
+			return callback(null,returned);
+		})
+	},
+	function(returned) {
+		if (returned < limit) {
+			offset = offset+returned;
+			return true;
+		} else {
+			return false;
+		}
+	}, function (err, args) {
+		if (err) {
+			logger.error('Uh oh..',err);
+			return cb(err);
+		} else {
+			logger.debug('Done with outer..');
+
+			return cb(null);
+		}
+	});
+};
+
+builder.build = function(offset,limit) {
 	var conn;
 	var seen = 0;
 	return new Promise(function(resolve,reject) {
 		my_db.get_connection().then(connection => {
 			conn = connection;
-			var q = connection.query(get_query(seen, '5000000'));
+			logger.debug('Offset: '+offset);
+			var q = connection.query(get_query(offset, limit));
 			q
 				.on('error', function(err) {
 					// Handle error, an 'end' event will be emitted after this as well
@@ -68,7 +98,15 @@ builder.build = function() {
 								connection.resume();
 							});
 						},1000)
+					} else if (seen % 500000 === 0 ) {
+						setTimeout(function() {
+							builder.process_row(row, function() {
+								connection.resume();
+							});
+						},100000)
+
 					} else {
+
 						builder.process_row(row, function() {
 							connection.resume();
 						});
@@ -83,7 +121,7 @@ builder.build = function() {
 					logger.debug('Done streaming mrconso rows..');
 					streams.stream_handler.close_all_writers();
 					conn.release();
-					return resolve(true);
+					return resolve(seen);
 				});
 
 		});
