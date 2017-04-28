@@ -1,0 +1,9 @@
+SELECT mrcon.CUI, mrcon.LAT, mrcon.TS, mrcon.LUI, mrcon.STT, mrcon.SUI, mrcon.ISPREF, mrcon.AUI, mrcon.SCUI, mrcon.SAB, mrcon.TTY, mrcon.CODE, mrcon.STR, mrcon.SUPPRESS, mrsty.TUI
+FROM MRCONSO mrcon, MRSTY mrsty
+WHERE mrcon.CUI = 'C0004238' AND mrcon.CUI = mrsty.CUI AND
+      (mrcon.SAB='MSH' OR mrcon.SAB='ICD9CM' OR mrcon.SAB='ICD10CM' OR mrcon.SAB='SNOMEDCT_US' OR mrcon.SAB='CHV' OR
+         mrcon.SAB='LNC' OR mrcon.SAB='CPT' OR mrcon.SAB='ICD10PCS' OR mrcon.SAB='MEDLINEPLUS' OR mrcon.SAB='MSH' OR
+         mrcon.SAB='NCI' OR mrcon.SAB='RXNORM'
+      )
+ORDER BY mrcon.AUI, mrcon.CUI, mrcon.LUI, mrcon.SUI
+

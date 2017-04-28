@@ -32,11 +32,17 @@ cui.process_row = function (config, row) {
 		constants.properties.hasAui,
 		row.AUI);
 
+
+	// cui has lui
 	var lui_prop = uutils.get_lui_relationship(row.TS);
-	// aui has string
 	writer.addTriple(row.CUI,
 		lui_prop,
 		row.LUI);
+
+	// cui has semantic type
+	writer.addTriple(row.CUI,
+		constants.properties.hasSemanticType,
+		constants.resources.Tui+row.TUI);
 
 
 };

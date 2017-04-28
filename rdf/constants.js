@@ -18,6 +18,7 @@ rdfconst.resources = {
 	Lui: rdfconst.namespaces.UMLS_BASE_DATA+'/lui#',
 	Sui: rdfconst.namespaces.UMLS_BASE_DATA+'/sui#',
 	Sab: rdfconst.namespaces.UMLS_BASE_DATA+'/sab#',
+	Tui: rdfconst.namespaces.UMLS_BASE_DATA+'/tui#'
 }
 
 
@@ -44,6 +45,7 @@ rdfconst.properties = {
 	hasLanguage: rdfconst.namespaces.UMLS_SCHEMA + "hasLanguage",
 	hasCode: rdfconst.namespaces.UMLS_SCHEMA + "hasCode",
 	hasStringType: rdfconst.namespaces.UMLS_SCHEMA + "hasStringType",
+	hasSemanticType: rdfconst.namespaces.UMLS_SCHEMA + "hasSemanticType",
 
 	// Other terminologies
 	rdfType: rdfconst.namespaces.RDF + "type",
@@ -57,6 +59,7 @@ rdfconst.graphs = {
 	Cui: rdfconst.basename_graph+'cui',
 	Lui: rdfconst.basename_graph+'lui',
 	Sui: rdfconst.basename_graph+'sui',
+	Tui: rdfconst.basename_graph+'tui',
 }
 
 module.exports = rdfconst;
