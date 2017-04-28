@@ -1,9 +1,7 @@
 var fs = require('fs');
 var marklogic = require('marklogic');
-var my = require('../marklogic/my-connection.js');
 var N3 = require('n3');
 
-var db = marklogic.createDatabaseClient(my.connInfo);
 
 
 var writer = N3.Writer({ format: 'test/turtle' });

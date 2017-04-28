@@ -5,7 +5,7 @@ var n3 = require('n3');
 var logger = require('winston');
 
 
-var db = marklogic.createDatabaseClient(my.connInfo);
+//var db = marklogic.createDatabaseClient(my.connInfo);
 
 
 function file_to_marklogic(abs_path_to_file, graph_name) {

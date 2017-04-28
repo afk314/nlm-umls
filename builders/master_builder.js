@@ -20,10 +20,10 @@ var sui = require('./sui');
 var lui = require('./lui');
 var cui = require('./cui');
 
-mlutils.init();
-
 
 var builder = {};
+module.exports = builder;
+
 var total_seen = 0;
 var _config;
 var query_provider;
@@ -53,7 +53,7 @@ builder.outer_run = function(config, queryprovider, cb) {
 			return cb(err);
 		} else {
 			logger.debug('Done with outer..');
-
+			my_db.end();
 			return cb(null);
 		}
 	});
@@ -120,11 +120,7 @@ builder.build = function(offset,limit) {
 };
 
 
-
-
-
 builder.process_row = function (row, cb) {
-
 	row = cleansing.transform_row(row);
 
 	//logger.debug(util.inspect(row));
@@ -134,9 +130,5 @@ builder.process_row = function (row, cb) {
 	lui.process_row(config, row);
 	cui.process_row(config, row);
 
-
 	return cb();
 };
-
-module.exports = builder;
-

@@ -1,40 +1,47 @@
 var marklogic = require('marklogic');
-var my = require('./my-connection.js');
+var logger = require('winston');
 
-var db, config, mlutils;
+var ml_db, config;
 
 var mlutils = {};
 
 mlutils.init = function(configuration) {
 	config = configuration;
-	db = marklogic.createDatabaseClient(my.connInfo);
+	var default_instance = config.get('marklogic.default');
+	var ml_config = config.get('marklogic.'+default_instance);
+	ml_db = marklogic.createDatabaseClient(ml_config);
+	logger.debug('Connection established to MarkLogic: '+ml_config.host)
 };
 
 mlutils.get_db = function() {
-	return db;
+	return ml_db;
 };
 
 
-// mlutils.get_write_stream = function(graph, mimetype) {
-// 	return db.graphs.createWriteStream(graph, mimetype);
-// };
-
 mlutils.merge_data = function(graph, mimetype, writer) {
-	db.graphs.merge(graph,mimetype,writer);
-}
+	ml_db.graphs.merge(graph,mimetype,writer);
+};
 
 mlutils.list_graphs = function() {
-	db.graphs.list('text/uri-list')
-		.result(
-			function (response) {
-				for (var uri of response.split('\n')) {
-					console.log(uri);
+	return new Promise(function(resolve,reject) {
+		//logger.debug('----------------Existing Graphs--------------------')
+		ml_db.graphs.list('text/uri-list')
+			.result(
+				function (response) {
+					for (var uri of response.split('\n')) {
+						console.log(uri);
+					}
+					//logger.debug('----------------------------------------------------')
+					return resolve();
+				},
+				function (error) {
+					console.log(JSON.stringify(error));
+					return reject(error);
 				}
-			},
-			function (error) {
-				console.log(JSON.stringify(error));
-			}
-		);
-}
+			);
+	})
+
+
+};
 
 module.exports = mlutils;

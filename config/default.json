@@ -1,3 +1,25 @@
 {
-  "use_suppressible": false
+  "mysql": {
+    "limit": 15000
+  },
+  "umls": {
+    "use_suppressible": false
+  },
+  "marklogic": {
+    "prod": {
+      "host": "192.168.0.61",
+      "port": "8000",
+      "user": "umls_user",
+      "password": "dillweed",
+      "database": "umls"
+    },
+    "dev": {
+      "host": "127.0.0.1",
+      "port": "8000",
+      "user": "umls_user",
+      "password": "dillweed",
+      "database": "umls"
+    }
+  }
+
 }

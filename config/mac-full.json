@@ -7,9 +7,9 @@
     "pool": "5"
   },
   "marklogic": {
-    "default": "dev"
+    "default": "prod"
   },
   "application": {
-    "query_provider": "./mysql/dev_query_provider.js"
+    "query_provider": "./mysql/query_provider.js"
   }
 }

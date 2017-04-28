@@ -15,6 +15,7 @@ exports.get_connection = function() {
 		if (!pool) {
 			return reject(new Error('Pool is not initialized...'));
 		}
+		logger.debug('Connection established to mysql: '+config.mysql.host)
 		pool.getConnection(function(err,connection) {
 			if (err) {
 				return reject(err);
@@ -31,7 +32,7 @@ exports.end = function() {
 			logger.error('Something bad..',err);
 			console.log(err);
 		} else {
-			logger.debug('DB Pool is closed..');
+			logger.debug('Connection closed to mysql');
 		}
 	})
 };
