@@ -14,11 +14,11 @@ var lui = {};
 
 
 
-lui.process_row = function (row) {
+lui.process_row = function (config, row) {
 
 
 	var graph = constants.graphs.Lui;
-	writer = streams.stream_handler.get_writer(graph);
+	writer = streams.get_writer(graph);
 
 	writer.addTriple(row.LUI,
 			constants.properties.rdfType,
@@ -37,9 +37,9 @@ lui.process_row = function (row) {
 	// Inferred relationships..
 
 
-	writer.addTriple(row.LUI,
-		constants.properties.belongsTo,
-		row.AUI);
+	// writer.addTriple(row.LUI,
+	// 	constants.properties.belongsTo,
+	// 	row.AUI);
 
 
 };

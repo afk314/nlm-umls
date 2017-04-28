@@ -15,9 +15,9 @@ mlutils.get_db = function() {
 };
 
 
-mlutils.get_write_stream = function(graph, mimetype) {
-	return db.graphs.createWriteStream(graph, mimetype);
-};
+// mlutils.get_write_stream = function(graph, mimetype) {
+// 	return db.graphs.createWriteStream(graph, mimetype);
+// };
 
 mlutils.merge_data = function(graph, mimetype, writer) {
 	db.graphs.merge(graph,mimetype,writer);

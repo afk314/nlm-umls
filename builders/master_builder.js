@@ -7,6 +7,8 @@ var logger = require('winston');
 var mlutils = require('../marklogic/marklogic-utils');
 var constants = require('../rdf/constants');
 var streams = require('./../marklogic/graph_writers');
+var cleansing = require('./../helpers/cleansing');
+
 var n3 = require('n3');
 var util = require('util');
 var async = require('async');
@@ -16,29 +18,22 @@ var aui = require('./aui');
 var sab = require('./sab');
 var sui = require('./sui');
 var lui = require('./lui');
-
-
-var query = "SELECT * FROM MRCONSO mrcon where  \n" +
-
-	"      (mrcon.SAB='MSH' OR mrcon.SAB='ICD9CM' OR mrcon.SAB='ICD10CM' OR mrcon.SAB='SNOMEDCT_US' OR mrcon.SAB='CHV' OR \n" +
-	"         mrcon.SAB='LNC' OR mrcon.SAB='CPT' OR mrcon.SAB='ICD10PCS' OR mrcon.SAB='MEDLINEPLUS' OR mrcon.SAB='MSH' OR \n" +
-	"         mrcon.SAB='NCI' OR mrcon.SAB='RXNORM'\n" +
-	"      ) ORDER BY AUI,SUI LIMIT %OFFSET%,%LIMIT%";
-
-var builder = {};
-
-var count = 0;
+var cui = require('./cui');
 
 mlutils.init();
 
-function get_query(offset, limit) {
-	return query.replace('%OFFSET%', offset).replace('%LIMIT%', limit);
-}
 
+var builder = {};
+var total_seen = 0;
+var _config;
+var query_provider;
 
-builder.outer_run = function(cb) {
+const limit = 15000;
+
+builder.outer_run = function(config, queryprovider, cb) {
 	var offset = 0;
-	var limit = 25000;
+	_config = config;
+	query_provider = queryprovider;
 	async.doUntil(function(callback) {
 		builder.build(offset,limit).then(function(returned) {
 			offset = offset + returned;
@@ -67,11 +62,12 @@ builder.outer_run = function(cb) {
 builder.build = function(offset,limit) {
 	var conn;
 	var seen = 0;
+	var start = new Date();
 	return new Promise(function(resolve,reject) {
 		my_db.get_connection().then(connection => {
 			conn = connection;
 			logger.debug('Offset: '+offset);
-			var q = connection.query(get_query(offset, limit));
+			var q = connection.query(query_provider.get_query(offset, limit));
 			q
 				.on('error', function(err) {
 					// Handle error, an 'end' event will be emitted after this as well
@@ -86,42 +82,37 @@ builder.build = function(offset,limit) {
 
 					connection.pause();
 					seen++;
-					if (seen % 250 === 0) {
-						logger.debug(seen+' rows seen');
-					}
-
-
-
-					if (seen % 5000 === 0) {
-						setTimeout(function() {
-							builder.process_row(row, function() {
-								connection.resume();
-							});
-						},1000)
+					if (seen % limit === 0) {
+						builder.process_row(row, function() {
+							connection.resume();
+						});
 					} else if (seen % 500000 === 0 ) {
-						setTimeout(function() {
-							builder.process_row(row, function() {
-								connection.resume();
-							});
-						},100000)
-
+						builder.process_row(row, function() {
+							connection.resume();
+						});
 					} else {
 
 						builder.process_row(row, function() {
 							connection.resume();
 						});
 					}
-
-
-
-
 				})
 				.on('end', function() {
+
 					// all rows have been received
-					logger.debug('Done streaming mrconso rows..');
-					streams.stream_handler.close_all_writers();
-					conn.release();
-					return resolve(seen);
+					connection.release();
+					//logger.debug('Release db pool object');
+					streams.commit().then(function(result) {
+						//logger.debug('Committed!');
+						var now = new Date();
+						var dif = (now.getTime() - start.getTime()) / 1000;
+						logger.debug(dif + ' seconds');
+						return resolve(seen);
+					}).catch(function(err) {
+						logger.error(err);
+						return reject(err);
+					})
+
 				});
 
 		});
@@ -130,40 +121,18 @@ builder.build = function(offset,limit) {
 
 
 
-function gw(graph) {
-	return streams.stream_handler.get_writer(graph);
-}
 
-
-function transform_row(row) {
-
-	if (row.LAT = 'ENG') {
-		row.LAT = 'en';
-	} else if (row.LAT = 'FRE') {
-		row.LAT = "fr";
-	} else if (row.LAT = 'SPA') {
-		row.LAT = "es";
-	}
-
-	row.CUI = constants.resources.Cui + row.CUI;
-	row.AUI = constants.resources.Aui + row.AUI;
-	row.LUI = constants.resources.Lui + row.LUI;
-	row.SUI = constants.resources.Sui + row.SUI;
-	row.STR = '"'+row.STR+'"@'+row.LAT;
-	row.CODE = uutils.get_uri_for_code(row.SAB, row.CODE);
-	return row;
-}
 
 builder.process_row = function (row, cb) {
 
-	row = transform_row(row);
+	row = cleansing.transform_row(row);
 
 	//logger.debug(util.inspect(row));
-	aui.process_row(row);
-	sab.process_row(row);
-	sui.process_row(row);
-	lui.process_row(row);
-
+	aui.process_row(config, row);
+	sab.process_row(config, row);
+	sui.process_row(config, row);
+	lui.process_row(config, row);
+	cui.process_row(config, row);
 
 
 	return cb();

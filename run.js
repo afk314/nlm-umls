@@ -8,6 +8,8 @@ var mlutils = require('./marklogic/marklogic-utils');
 
 
 var database = require('./mysql/database');
+var query_provider = require('./mysql/query_provider');
+
 var inits = require('./inits');
 
 logger.debug("We are running!");
@@ -17,15 +19,19 @@ mlutils.init(config);
 
 mlutils.list_graphs();
 
+try {
+	master_builder.outer_run(config,query_provider, function (err, results) {
 
-master_builder.outer_run(function(err,results) {
-	database.end();
-	if (err) {
-		logger.error('Oh no..',err);
-	} else {
-		logger.debug(results);
-	}
-});
+		if (err) {
+			logger.error('Oh no..', err);
+		} else {
+			logger.debug(results);
+		}
+		database.end();
+	})
+} catch (err) {
+	logger.error('Oh no..', err);
+}
 
 
 

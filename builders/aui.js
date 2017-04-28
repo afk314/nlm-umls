@@ -10,16 +10,13 @@ var uutils = require('./../rdf/uri_utils');
 
 var aui = {};
 
-var writer;
 
 
-
-
-aui.process_row = function (row) {
+aui.process_row = function (config, row) {
 
 	var graph = uutils.graph_for_sab(row.SAB);
 
-	writer = streams.stream_handler.get_writer(graph);
+	var writer = streams.get_writer(graph);
 
 
 	// aui has type
@@ -42,13 +39,18 @@ aui.process_row = function (row) {
 		constants.properties.hasSui,
 		row.SUI);
 
+	// aui has sui
+	writer.addTriple(row.AUI,
+		constants.properties.hasSource,
+		row.SAB);
+
 
 	// Inferred relationships..
 
 	// belongs to (INFERRED)
-	writer.addTriple(row.AUI,
-		constants.properties.belongsTo,
-		row.CUI);
+	// writer.addTriple(row.AUI,
+	// 	constants.properties.belongsTo,
+	// 	row.CUI);
 
 };
 

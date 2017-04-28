@@ -14,11 +14,11 @@ var sab = {};
 
 var seen = [];
 
-sab.process_row = function (row) {
+sab.process_row = function (config, row) {
 
 	if (!seen.includes(row.SAB)) {
 		var graph = uutils.graph_for_sab(row.SAB);
-		writer = streams.stream_handler.get_writer(graph);
+		writer = streams.get_writer(graph);
 		writer.addTriple(constants.resources.Sab + row.SAB,
 			constants.properties.rdfType,
 			constants.classes.SAB);

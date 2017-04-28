@@ -15,11 +15,11 @@ var writer;
 
 
 
-cui.process_row = function (row) {
+cui.process_row = function (config, row) {
 
 	var graph = constants.graphs.Cui;
 
-	writer = streams.stream_handler.get_writer(graph);
+	writer = streams.get_writer(graph);
 
 
 	// aui has type
@@ -38,11 +38,7 @@ cui.process_row = function (row) {
 		lui_prop,
 		row.LUI);
 
-	// aui has sui
-	writer.addTriple(row.AUI,
-		constants.properties.hasSui,
-		row.SUI);
 
 };
 
-module.exports = aui;
+module.exports = cui;
