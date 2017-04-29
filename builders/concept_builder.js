@@ -67,7 +67,7 @@ concepts.build = function(offset, limit) {
 		my_db.get_connection().then(connection => {
 			conn = connection;
 			logger.debug('Offset: '+offset);
-			var q = connection.query(query_provider.get_query(offset, limit));
+			var q = connection.query(query_provider.get_mrconso_query(offset, limit));
 			q
 				.on('error', function(err) {
 					// Handle error, an 'end' event will be emitted after this as well

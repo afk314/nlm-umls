@@ -1,7 +1,8 @@
 
+var queries = {};
+module.exports = queries;
 
-
-var query = "SELECT mrcon.CUI, mrcon.LAT, mrcon.TS, mrcon.LUI, mrcon.STT, mrcon.SUI, mrcon.ISPREF, mrcon.AUI, mrcon.SCUI, mrcon.SAB, mrcon.TTY, mrcon.CODE, mrcon.STR, mrcon.SUPPRESS, mrsty.TUI " +
+var mrconso_query = "SELECT mrcon.CUI, mrcon.LAT, mrcon.TS, mrcon.LUI, mrcon.STT, mrcon.SUI, mrcon.ISPREF, mrcon.AUI, mrcon.SCUI, mrcon.SAB, mrcon.TTY, mrcon.CODE, mrcon.STR, mrcon.SUPPRESS, mrsty.TUI " +
 	"      FROM MRCONSO mrcon, MRSTY mrsty where mrcon.CUI = 'C0004238' AND mrcon.CUI = mrsty.CUI AND \n" +
 
 	"      (mrcon.SAB='MSH' OR mrcon.SAB='ICD9CM' OR mrcon.SAB='ICD10CM' OR mrcon.SAB='SNOMEDCT_US' OR mrcon.SAB='CHV' OR \n" +
@@ -10,7 +11,18 @@ var query = "SELECT mrcon.CUI, mrcon.LAT, mrcon.TS, mrcon.LUI, mrcon.STT, mrcon.
 	"      ) ORDER BY AUI,SUI LIMIT %OFFSET%,%LIMIT%";
 
 
-module.exports.get_query = function (offset, limit) {
-	return query.replace('%OFFSET%', offset).replace('%LIMIT%', limit);
-}
+var mrrel_query = "SELECT * FROM MRREL WHERE  " +
+			" (SAB='MSH' OR SAB='ICD9CM' OR SAB='ICD10CM' OR SAB='SNOMEDCT_US' OR SAB='CHV' OR " +
+			" SAB='LNC' OR SAB='CPT' OR SAB='ICD10PCS' OR SAB='MEDLINEPLUS' OR SAB='MSH' OR " +
+			" SAB='NCI' OR SAB='RXNORM') LIMIT 1000";
+
+
+queries.get_mrconso_query = function (offset, limit) {
+	return mrconso_query.replace('%OFFSET%', offset).replace('%LIMIT%', limit);
+};
+
+queries.get_mrrel_query = function(offset, limit) {
+	return mrrel_query
+};
+
 
