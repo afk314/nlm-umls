@@ -41,6 +41,33 @@ function clear_writers() {
 	writers = {};
 }
 
+
+streams.commit_graph = function(graph, writer, merge) {
+	var func;
+	return new Promise(function(resolve,rej) {
+		if (!merge) {
+			func = 	mlutils.get_db().graphs.merge;
+		}	else {
+			func = mlutils.get_db().graphs.write;
+		}
+
+		writer.end(function(err,result) {
+			if (err) {
+				return reject(err);
+			} else {
+				try {
+					mlutils.get_db().graphs.write(graph, 'text/turtle', result).result(function (response) {
+						return resolve(response);
+					});
+				} catch (err) {
+					logger.error('Uh oh..', err);
+					return reject(err);
+				}
+			}
+		});
+	});
+};
+
 streams.commit = function() {
 	return new Promise(function(resolve,reject) {
 		async.eachLimit(get_array_of_keys(), 2, function(graph, callback) {

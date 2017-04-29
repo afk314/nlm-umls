@@ -2,7 +2,7 @@ var mysql = require('mysql');
 var config = require('config');
 var Promise = require('bluebird');
 var logger = require('winston');
-var master_builder = require('./builders/master_builder');
+var concepts = require('./builders/concept_builder');
 var mlutils = require('./marklogic/marklogic-utils');
 var inits = require('./inits');
 
@@ -15,7 +15,7 @@ inits.init(config);
 
 
 mlutils.list_graphs().then(function() {
-	master_builder.outer_run(config, query_provider, function (err, results) {
+	concepts.outer_run(config, query_provider, function (err, results) {
 		if (err) {
 			logger.error('Oh no..', err);
 		} else {

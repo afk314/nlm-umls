@@ -21,8 +21,8 @@ var lui = require('./lui');
 var cui = require('./cui');
 
 
-var builder = {};
-module.exports = builder;
+var concepts = {};
+module.exports = concepts;
 
 var total_seen = 0;
 var _config;
@@ -30,12 +30,12 @@ var query_provider;
 
 const limit = 15000;
 
-builder.outer_run = function(config, queryprovider, cb) {
+concepts.outer_run = function(config, queryprovider, cb) {
 	var offset = 0;
 	_config = config;
 	query_provider = queryprovider;
 	async.doUntil(function(callback) {
-		builder.build(offset,limit).then(function(returned) {
+		concepts.build(offset,limit).then(function(returned) {
 			offset = offset + returned;
 			return callback(null,returned);
 		})
@@ -59,7 +59,7 @@ builder.outer_run = function(config, queryprovider, cb) {
 	});
 };
 
-builder.build = function(offset,limit) {
+concepts.build = function(offset, limit) {
 	var conn;
 	var seen = 0;
 	var start = new Date();
@@ -83,16 +83,16 @@ builder.build = function(offset,limit) {
 					connection.pause();
 					seen++;
 					if (seen % limit === 0) {
-						builder.process_row(row, function() {
+						concepts.process_row(row, function() {
 							connection.resume();
 						});
 					} else if (seen % 500000 === 0 ) {
-						builder.process_row(row, function() {
+						concepts.process_row(row, function() {
 							connection.resume();
 						});
 					} else {
 
-						builder.process_row(row, function() {
+						concepts.process_row(row, function() {
 							connection.resume();
 						});
 					}
@@ -120,7 +120,7 @@ builder.build = function(offset,limit) {
 };
 
 
-builder.process_row = function (row, cb) {
+concepts.process_row = function (row, cb) {
 	row = cleansing.transform_row(row);
 
 	//logger.debug(util.inspect(row));

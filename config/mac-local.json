@@ -7,6 +7,7 @@
     "pool": "5"
   },
   "marklogic": {
+    "clear_first": true,
     "default": "dev"
   },
   "application": {

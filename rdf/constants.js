@@ -28,6 +28,7 @@ rdfconst.classes = {
 	SUI: rdfconst.namespaces.UMLS_SCHEMA + "SuiConcept",
 	AUI: rdfconst.namespaces.UMLS_SCHEMA + "AuiConcept",
 	SAB: rdfconst.namespaces.UMLS_SCHEMA + "SabConcept",
+	TUI: rdfconst.namespaces.UMLS_SCHEMA + "TuiConcept",
 
 };
 

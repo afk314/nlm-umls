@@ -18,6 +18,23 @@ mlutils.get_db = function() {
 };
 
 
+
+mlutils.remove_graph = function(graph) {
+	return new Promise(function(resolve,reject) {
+
+		ml_db.graphs.probe(graph).result(function(response) {
+			if (!response.exists) {
+				return resolve();
+			} else {
+				ml_db.graphs.remove(graph).result(function(response) {
+					logger.debug("Removed graph:" + graph);
+					return resolve(response);
+				});
+			}
+		})
+	})
+};
+
 mlutils.merge_data = function(graph, mimetype, writer) {
 	ml_db.graphs.merge(graph,mimetype,writer);
 };
